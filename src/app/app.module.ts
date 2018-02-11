@@ -17,6 +17,7 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 import { HeaderComponent } from './navigation/header/header.component';
 import { SidenavListComponent } from './navigation/sidenav-list/sidenav-list.component';
 import { StopTrainingComponent } from './training/current-training/stop-training.component';
+import { AuthService } from './auth/auth.service';
 
 
 @NgModule({
@@ -44,7 +45,7 @@ import { StopTrainingComponent } from './training/current-training/stop-training
   ],
   // tslint:disable-next-line:max-line-length
   entryComponents: [StopTrainingComponent], // any component that will not be instatiated by its selector or via router-outlet: Angular has no idea when this component would get used otherwise. entryComponents just tells ng to be prepared to use the component
-  providers: [],
+  providers: [AuthService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
