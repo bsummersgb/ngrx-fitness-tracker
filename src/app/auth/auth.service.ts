@@ -55,7 +55,7 @@ export class AuthService {
 
   // if user is not equal to null, then the user is authenticated so isAuth() will return true
   isAuth() {
-    return this.user;
+    return this.user != null;
   }
 
   private authSuccessfully(route: Array<string>) {
