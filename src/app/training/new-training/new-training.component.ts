@@ -4,6 +4,8 @@ import { Exercise } from '../exercise.model';
 import { NgForm } from '@angular/forms';
 import { AngularFirestore } from 'angularfire2/firestore';
 import { Observable } from 'rxjs/Observable';
+import { map } from 'rxjs/operators';
+
 
 
 @Component({
@@ -12,9 +14,7 @@ import { Observable } from 'rxjs/Observable';
   styleUrls: ['./new-training.component.css']
 })
 export class NewTrainingComponent implements OnInit {
-  exercises: Observable<any>; // I can't use Exercise as a payload yet because an 'Exercise'
-                              // has an id and the data I get back doesn't include the id. This is because
-                              // valueChanges() in OnInit strips away metadata in the returned result.
+  exercises: Observable<Exercise[]>;
 
   constructor(
     private trainingService: TrainingService,
@@ -24,7 +24,15 @@ export class NewTrainingComponent implements OnInit {
     // this.exercises = this.trainingService.getAvailableExercises();
     this.exercises = this.db
     .collection('available exercises')
-    .valueChanges();
+    .snapshotChanges()                    // this firestore method returns an Obs, tf we can subscribe to it
+    .map(docArray => {
+      return docArray.map(doc => {
+        return {
+        id: doc.payload.doc.id,
+        ...doc.payload.doc.data()
+        };
+      });
+    });
   }
 
   onStartTraining(form: NgForm) {
