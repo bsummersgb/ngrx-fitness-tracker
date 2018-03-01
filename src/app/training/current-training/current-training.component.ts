@@ -42,7 +42,6 @@ export class CurrentTrainingComponent implements OnInit {
 
     // afterClosed() returns an observable with the data bound to mat-dialog-close
     dialogRef.afterClosed().subscribe(result => {
-      console.log(result);
       if (result) {
         this.trainingService.cancelExercise(this.progress);
       } else {
