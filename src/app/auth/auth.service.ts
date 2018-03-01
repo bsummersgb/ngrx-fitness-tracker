@@ -21,16 +21,30 @@ export class AuthService {
     private router: Router,
     private angularFireauth: AngularFireAuth,
     private trainingService: TrainingService
-  ) { }
+  ) {}
+
+  initAuthListener() {
+    this.angularFireauth.authState.subscribe(user => {
+      if (user) {
+        this.isAuthenticated = true;
+        this.authChange.next(true);
+        this.router.navigate(['/training']);
+      } else {
+        this.trainingService.cancelSubscriptions();
+        this.authChange.next(false);
+        this.router.navigate(['/login']);
+        this.isAuthenticated = false;
+      }
+    });
+    // this will emit an event whenever the authentication status changes i.e. authenticated to unauthenticated etc
+  }
 
   // intialise the user with values from the signup form, send a request to the server to create the user there
   registerUser(authData: AuthData) {
     this.angularFireauth.auth.createUserWithEmailAndPassword(
       authData.email,
       authData.password
-    ).then(result => {
-      this.authSuccessfully();
-    })
+    ).then(result => {})
     .catch(error => {
       console.log(error);
     });
@@ -41,29 +55,18 @@ export class AuthService {
     this.angularFireauth.auth.signInWithEmailAndPassword(
       authData.email,
       authData.password
-    ).then(result => {
-      this.authSuccessfully();
-    })
+    ).then(result => {})
     .catch(error => {
       console.log(error);
     });
   }
 
   logout() {
-    this.trainingService.cancelSubscriptions();
-    this.authChange.next(false);
-    this.router.navigate(['/login']);
-    this.isAuthenticated = false;
+    this.angularFireauth.auth.signOut();
   }
 
   // if user is not equal to null, then the user is authenticated so isAuth() will return true
   isAuth() {
     return this.isAuthenticated;
-  }
-
-  private authSuccessfully() {
-    this.isAuthenticated = true;
-    this.authChange.next(true);  // next() acts in place of emit() which I'd use on an EventEmitter
-    this.router.navigate(['/training']);
   }
 }
