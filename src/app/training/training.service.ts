@@ -4,6 +4,7 @@ import { Subject } from 'rxjs/Subject';
 import { AngularFirestore } from 'angularfire2/firestore';
 import { Observable } from 'rxjs/Observable';
 import { map } from 'rxjs/operators';
+import { Subscription } from 'rxjs';
 
 @Injectable()
 export class TrainingService {
@@ -12,11 +13,12 @@ export class TrainingService {
   finishedExercisesChanged = new Subject<Exercise[]>();
   private availableExercises: Exercise[] = [];
   private runningExercise: Exercise;
+  private firebaseSubscriptions: Subscription[] = [];
 
   constructor(private db: AngularFirestore) { }
 
   fetchAvailableExercises() {
-    return this.db
+    this.firebaseSubscriptions.push(this.db
     .collection('available exercises')
     .snapshotChanges()                    // this firestore method returns an Obs, tf we can subscribe to it
     .map(docArray => {
@@ -30,7 +32,7 @@ export class TrainingService {
     .subscribe((exercises: Exercise[]) => {
       this.availableExercises = exercises;
       this.exercisesChanged.next([...this.availableExercises]);
-    });
+    }));
   }
 
   startExercise(selectedId: string) {
@@ -69,14 +71,19 @@ export class TrainingService {
   }
 
   fetchCompletedOrCancelledExercises() {
-    this.db
+    this.firebaseSubscriptions.push(this.db
     .collection('finishedExercises')
     .valueChanges()
     .subscribe(
       (exercises: Exercise[]) => {
         this.finishedExercisesChanged.next(exercises);
       }
-    );
+    ));
+  }
+
+  cancelSubscriptions() {
+    this.firebaseSubscriptions.forEach(subscription => subscription.unsubscribe);
+    // for each subscription in the firebaseSubscriptions array, call unsubscribe
   }
 
   private addDataToDatabase(exercise: Exercise) {

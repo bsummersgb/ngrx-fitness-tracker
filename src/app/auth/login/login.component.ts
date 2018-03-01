@@ -28,7 +28,7 @@ export class LoginComponent implements OnInit {
 
   loginSubmit(loginForm: FormGroup) {
     this.authService.login({
-      email: this.loginForm.value.email, // this is used here as I used a Reactive Form approach
+      email: this.loginForm.value.email, // 'this' is used here as I used a Reactive Form approach
       password: this.loginForm.value.password
     });
   }

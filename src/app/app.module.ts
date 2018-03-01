@@ -4,6 +4,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AngularFireModule } from 'angularfire2';
 import { AngularFirestoreModule } from 'angularfire2/firestore';
+import { AngularFireAuthModule } from 'angularfire2/auth';
 
 
 import { AppComponent } from './app.component';
@@ -49,7 +50,8 @@ import { environment } from '../environments/environment';
     FormsModule,
     ReactiveFormsModule,
     AngularFireModule.initializeApp(environment.firebase),
-    AngularFirestoreModule
+    AngularFirestoreModule,
+    AngularFireAuthModule
   ],
   // tslint:disable-next-line:max-line-length
   entryComponents: [StopTrainingComponent], // any component that will not be instatiated by its selector or via router-outlet: Angular has no idea when this component would get used otherwise. entryComponents just tells ng to be prepared to use the component

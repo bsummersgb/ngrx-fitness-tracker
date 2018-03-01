@@ -6,60 +6,64 @@ import { Router } from '@angular/router'; // redirect after login or signup
 import { User } from './user.model';
 import { AuthData } from './auth-data.model';
 import { Subject } from 'rxjs/Subject';
+import { AngularFireAuth } from 'angularfire2/auth';
+import { TrainingService } from '../training/training.service';
 
 @Injectable() // allows you to inject a service into a service (i.e. the RouterService in this case)
 export class AuthService {
-  private user: User; // initially, user is undefined. It's then an object after calling registerUser() OR
-                      // login; and then null again on logout()
+  private isAuthenticated = false;
   authChange = new Subject<boolean>(); // indicates signed in or not
   // You cant use the EventEmitter that angular ships with as this is only to be used
   // for emitting custom events in components. Instead you should use Subject from rxjs.
   // Like EventEmitter, you can emit events and subscribe to these emitted events in other parts of the app.
 
-  constructor( private router: Router ) { }
+  constructor(
+    private router: Router,
+    private angularFireauth: AngularFireAuth,
+    private trainingService: TrainingService
+  ) { }
 
   // intialise the user with values from the signup form, send a request to the server to create the user there
   registerUser(authData: AuthData) {
-    this.user = {
-      email: authData.email,
-      userId: Math.round(Math.random() * 10000).toString() // generate an 'almost' random id (we'll get one from the server later)
-    };
-    this.authSuccessfully(['/training']);
+    this.angularFireauth.auth.createUserWithEmailAndPassword(
+      authData.email,
+      authData.password
+    ).then(result => {
+      this.authSuccessfully();
+    })
+    .catch(error => {
+      console.log(error);
+    });
+
   }
 
   login(authData: AuthData) {
-    this.user = {
-      email: authData.email,
-      userId: Math.round(Math.random() * 10000).toString() // generate an 'almost' random id (we'll get one from the server later)
-    };
-    this.authSuccessfully(['/training']);
+    this.angularFireauth.auth.signInWithEmailAndPassword(
+      authData.email,
+      authData.password
+    ).then(result => {
+      this.authSuccessfully();
+    })
+    .catch(error => {
+      console.log(error);
+    });
   }
 
   logout() {
-    this.user = null;
+    this.trainingService.cancelSubscriptions();
     this.authChange.next(false);
     this.router.navigate(['/login']);
+    this.isAuthenticated = false;
   }
-
-  // provide access to the privately declared user object
-  getUser() {
-    return { ...this.user };
-  }
-
-  /* we use the spread operator to avoid people being able to change the value of user in the class.
-   for instance, if I just declared return this.user; because 'user' is a reference to the user object,
-   other code outside the class would be able to change its value via the getUser() method. Using the spread
-   operator will make a new object and return a brand new object that has the same properties and values but
-   in a different object.
-  */
 
   // if user is not equal to null, then the user is authenticated so isAuth() will return true
   isAuth() {
-    return this.user != null;
+    return this.isAuthenticated;
   }
 
-  private authSuccessfully(route: Array<string>) {
+  private authSuccessfully() {
+    this.isAuthenticated = true;
     this.authChange.next(true);  // next() acts in place of emit() which I'd use on an EventEmitter
-    this.router.navigate(route);
+    this.router.navigate(['/training']);
   }
 }
