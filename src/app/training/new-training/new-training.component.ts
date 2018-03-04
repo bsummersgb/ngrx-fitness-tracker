@@ -6,6 +6,7 @@ import { AngularFirestore } from 'angularfire2/firestore';
 import { Observable } from 'rxjs/Observable';
 import { Subscription } from 'rxjs/Subscription';
 import { map } from 'rxjs/operators';
+import { UIService } from '../../shared/ui.service';
 
 
 
@@ -17,14 +18,22 @@ import { map } from 'rxjs/operators';
 export class NewTrainingComponent implements OnInit, OnDestroy  {
   exercises: Exercise[];
   exerciseSubscription: Subscription;
+  loadingSubscription: Subscription;
+  isLoading = true;
 
   constructor(
     private trainingService: TrainingService,
-    private db: AngularFirestore) { }
+    private db: AngularFirestore,
+    private uiService: UIService
+  ) { }
 
   ngOnInit() {
     this.exerciseSubscription = this.trainingService.exercisesChanged.subscribe(
-      exercises => (this.exercises = exercises));
+      exercises => {
+        this.isLoading = false;
+        this.exercises = exercises;
+      }
+    );
     this.trainingService.fetchAvailableExercises();
   } // simply subscribes to changes in availableExercises, not directly to AngularFirestore collection. This keeps the
    // complexity in the service and out of the component

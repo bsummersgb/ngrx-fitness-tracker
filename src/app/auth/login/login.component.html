@@ -1,14 +1,14 @@
 <section class="login-form">
   <form
-  [formGroup]="loginForm" 
-  novalidate 
-  (ngSubmit)="loginSubmit()" 
-  fxLayout="column" 
-  fxLayoutAlign="center center" 
+  [formGroup]="loginForm"
+  novalidate
+  (ngSubmit)="loginSubmit()"
+  fxLayout="column"
+  fxLayoutAlign="center center"
   fxGap="10px">
     <mat-form-field>
       <input
-      matInput 
+      matInput
       type="email"
       placeholder="Your email"
       formControlName="email">
@@ -16,16 +16,13 @@
     </mat-form-field>
     <mat-form-field>
       <input
-      matInput 
+      matInput
       type="password"
-      placeholder="Password" 
+      placeholder="Password"
       formControlName="password">
-      <mat-error *ngIf="password.required">Password is required</mat-error>    
+      <mat-error>Password is required</mat-error>
     </mat-form-field>
-    <button type="submit" mat-raised-button color="primary" [disabled]="loginForm.invalid">Login</button>
+    <button *ngIf="!isLoading" type="submit" mat-raised-button color="primary" [disabled]="loginForm.invalid">Login</button>
+    <mat-spinner *ngIf="isLoading"></mat-spinner>
   </form>
 </section>
-
-
-<p>Form value: {{ loginForm.value | json }}</p>
-<p>Form status: {{ loginForm.status | json }}</p>

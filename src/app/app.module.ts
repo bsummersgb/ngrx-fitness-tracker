@@ -25,6 +25,7 @@ import { AuthService } from './auth/auth.service';
 import { TrainingService } from './training/training.service';
 
 import { environment } from '../environments/environment';
+import { UIService } from './shared/ui.service';
 
 
 @NgModule({
@@ -55,7 +56,7 @@ import { environment } from '../environments/environment';
   ],
   // tslint:disable-next-line:max-line-length
   entryComponents: [StopTrainingComponent], // any component that will not be instatiated by its selector or via router-outlet: Angular has no idea when this component would get used otherwise. entryComponents just tells ng to be prepared to use the component
-  providers: [AuthService, TrainingService],
+  providers: [AuthService, TrainingService, UIService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

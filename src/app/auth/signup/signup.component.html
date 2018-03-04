@@ -1,24 +1,24 @@
 <section class="signup-form">
   <form fxLayout="column" fxLayoutAlign="center center" #signupForm="ngForm" (ngSubmit)="onSubmit(signupForm)" fxLayoutGap="10px">
     <mat-form-field>
-      <input 
-      type="email" 
-      matInput 
-      placeholder="Your email" 
+      <input
+      type="email"
+      matInput
+      placeholder="Your email"
       ngModel
       name="email"
       email
       required
       #emailInput="ngModel">
       <mat-error *ngIf="emailInput.hasError('required')">Email is required</mat-error>
-      <mat-error *ngIf="!emailInput.hasError('required')">Email is invalid</mat-error>      
+      <mat-error *ngIf="!emailInput.hasError('required')">Email is invalid</mat-error>
     </mat-form-field>
     <mat-form-field hintLabel="Should be at least six characters">
-      <input 
-      type="password" 
-      matInput 
-      placeholder="Your password" 
-      ngModel 
+      <input
+      type="password"
+      matInput
+      placeholder="Your password"
+      ngModel
       name="password"
       required
       min-length="6"
@@ -26,9 +26,9 @@
       <mat-hint align="end">{{pwInput.value?.length}} / 6</mat-hint>
     </mat-form-field>
     <mat-form-field>
-      <input 
-      matInput 
-      placeholder="Your date of birth" 
+      <input
+      matInput
+      placeholder="Your date of birth"
       [matDatepicker]="picker"
       [max]="maxDate"
       ngModel
@@ -40,6 +40,7 @@
       <mat-checkbox ngModel name="agree" required color="primary">
         Agree to Terms &amp; Conditions
       </mat-checkbox>
-    <button type="submit" mat-raised-button color="primary" [disabled]="signupForm.invalid">Submit</button>
+    <button *ngIf="!isLoading" type="submit" mat-raised-button color="primary" [disabled]="signupForm.invalid">Submit</button>
+    <mat-spinner *ngIf="isLoading"></mat-spinner>
   </form>
 </section>

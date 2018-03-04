@@ -8,6 +8,7 @@ import { AuthData } from './auth-data.model';
 import { Subject } from 'rxjs/Subject';
 import { AngularFireAuth } from 'angularfire2/auth';
 import { TrainingService } from '../training/training.service';
+import { UIService } from '../shared/ui.service';
 
 @Injectable() // allows you to inject a service into a service (i.e. the RouterService in this case)
 export class AuthService {
@@ -20,7 +21,8 @@ export class AuthService {
   constructor(
     private router: Router,
     private angularFireauth: AngularFireAuth,
-    private trainingService: TrainingService
+    private trainingService: TrainingService,
+    private uiService: UIService
   ) {}
 
   initAuthListener() {
@@ -41,23 +43,31 @@ export class AuthService {
 
   // intialise the user with values from the signup form, send a request to the server to create the user there
   registerUser(authData: AuthData) {
+    this.uiService.loadingStateChanged.next(true);
     this.angularFireauth.auth.createUserWithEmailAndPassword(
       authData.email,
       authData.password
-    ).then(result => {})
+    ).then(result => {
+      this.uiService.loadingStateChanged.next(false);
+    })
     .catch(error => {
-      console.log(error);
+      this.uiService.loadingStateChanged.next(false);
+      this.uiService.showSnackbar(error.message, null, 3000);
     });
 
   }
 
   login(authData: AuthData) {
+    this.uiService.loadingStateChanged.next(true);
     this.angularFireauth.auth.signInWithEmailAndPassword(
       authData.email,
       authData.password
-    ).then(result => {})
+    ).then(result => {
+      this.uiService.loadingStateChanged.next(false);
+    })
     .catch(error => {
-      console.log(error);
+      this.uiService.loadingStateChanged.next(false);
+      this.uiService.showSnackbar(error.message, null, 3000);
     });
   }
 
