@@ -34,12 +34,16 @@ export class NewTrainingComponent implements OnInit, OnDestroy  {
         this.exercises = exercises;
       }
     );
-    this.trainingService.fetchAvailableExercises();
+    this.fetchExercises();
   } // simply subscribes to changes in availableExercises, not directly to AngularFirestore collection. This keeps the
    // complexity in the service and out of the component
 
   onStartTraining(form: NgForm) {
     this.trainingService.startExercise(form.value.exercise);
+  }
+
+  fetchExercises() {
+    this.trainingService.fetchAvailableExercises();
   }
 
   ngOnDestroy() {
