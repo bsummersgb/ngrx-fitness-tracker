@@ -34,7 +34,7 @@ export class LoginComponent implements OnInit, OnDestroy {
 
   get password() { return this.loginForm.get('password'); }
 
-  loginSubmit(loginForm: FormGroup) {
+  loginSubmit() {
     this.authService.login({
       email: this.loginForm.value.email, // 'this' is used here as I used a Reactive Form approach
       password: this.loginForm.value.password
@@ -42,6 +42,8 @@ export class LoginComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.loadingSubscription.unsubscribe();
+    if (this.loadingSubscription) {
+      this.loadingSubscription.unsubscribe();
+    }
   }
 }
